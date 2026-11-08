@@ -1,0 +1,24 @@
+name: CI Pipeline - Docker Build
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v3
+
+      - name: Construir y probar con Docker Compose
+        run: |
+          docker compose build
+          docker compose up -d
+          docker ps
+          sleep 5
+          curl -f http://localhost:3000/api/quotes || exit 1
+          docker compose down
